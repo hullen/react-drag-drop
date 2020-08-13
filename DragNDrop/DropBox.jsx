@@ -10,7 +10,7 @@ function selectBackgroundColor(isActive, canDrop) {
   } else if (canDrop) {
     return 'lightblue';
   } else {
-    return 'rgba(198, 219, 253, 0.5)';
+    return 'rgba(198, 219, 253, 0.6)';
   }
 }
 

@@ -7,6 +7,54 @@ import { DropConditional } from './DropConditional';
 import { ItemTypes } from './ItemTypes';
 import { DropAreaTag } from '../components/Tag';
 
+const subRegrasMock = {
+  type: ItemTypes.GROUP,
+  accepts: [],
+  items: [
+    {
+      type: ItemTypes.ITEM,
+      accepts: [ItemTypes.ITEM, ItemTypes.CONDITIONAL],
+      items: [
+        {
+          id: 1,
+          name: `Item 1`,
+          type: ItemTypes.ITEM,
+        },
+        {
+          id: 2,
+          name: `Item 2`,
+          type: ItemTypes.ITEM,
+        },
+      ],
+      cond: 'OU',
+    },
+    {
+      type: ItemTypes.CONDITIONAL,
+      accepts: [ItemTypes.CONDITIONAL],
+      items: [],
+      cond: 'E',
+    },
+    {
+      type: ItemTypes.ITEM,
+      accepts: [ItemTypes.ITEM, ItemTypes.CONDITIONAL],
+      items: [
+        {
+          id: 3,
+          name: `Item 3`,
+          type: ItemTypes.ITEM,
+        },
+        {
+          id: 4,
+          name: `Item 4`,
+          type: ItemTypes.ITEM,
+        },
+      ],
+      cond: 'E',
+    },
+  ],
+  cond: null,
+};
+
 const regrasMock = [
   {
     type: ItemTypes.ITEM,
@@ -20,6 +68,12 @@ const regrasCondMock = [
   {
     type: ItemTypes.CONDITIONAL,
     accepts: [ItemTypes.CONDITIONAL],
+    items: [],
+    cond: null,
+  },
+  {
+    type: ItemTypes.ITEM,
+    accepts: [ItemTypes.ITEM, ItemTypes.CONDITIONAL],
     items: [],
     cond: null,
   },
@@ -92,9 +146,7 @@ export default function DropArea() {
   }, []);
 
   const handleAddRegra = useCallback(() => {
-    setRegras(prev =>
-      update(prev, { $push: [...regrasCondMock, ...regrasMock] })
-    );
+    setRegras(prev => update(prev, { $push: regrasCondMock }));
   }, []);
 
   const handleRemoveRegra = useCallback(() => {
@@ -103,17 +155,40 @@ export default function DropArea() {
 
   const regrasMemo = useMemo(
     () =>
-      regras.map(({ type, accepts, items, cond }, index) => (
-        <DropBox
-          key={index}
-          onDrop={item => handleDrop(index, item)}
-          onRemove={itemIndex => handleRemove(index, itemIndex)}
-          accept={accepts}
-          type={type}
-          cond={cond}
-          itens={items}
-        />
-      )),
+      regras.map((regra, index) => {
+        if (regra.type === ItemTypes.GROUP) {
+          return (
+            <DropAreaTag>
+              <div style={{ width: '100%' }}>
+                {regra.items.map((subregra, index) => (
+                  <DropBox
+                    key={index}
+                    onDrop={item => handleDrop(index, item)}
+                    onRemove={itemIndex => handleRemove(index, itemIndex)}
+                    accept={subregra.accepts}
+                    type={subregra.type}
+                    cond={subregra.cond}
+                    itens={subregra.items}
+                  />
+                ))}
+              </div>
+            </DropAreaTag>
+          );
+        } else {
+          return (
+            <DropBox
+              key={index}
+              onDrop={item => handleDrop(index, item)}
+              onRemove={itemIndex => handleRemove(index, itemIndex)}
+              accept={regra.accepts}
+              type={regra.type}
+              cond={regra.cond}
+              itens={regra.items}
+            />
+          );
+        }
+        return null;
+      }),
     [regras]
   );
 
@@ -121,6 +196,18 @@ export default function DropArea() {
     () => tags.map(({ name, id }) => <DropItem id={id} name={name} key={id} />),
     [tags]
   );
+
+  const regrasLength = regras.length;
+  const podeAddRegra = useMemo(() => {
+    if (
+      regras[regrasLength - 1] &&
+      regras[regrasLength - 1].cond &&
+      regras[regrasLength - 1].items.length > 1
+    ) {
+      return true;
+    }
+    return false;
+  }, [regras]);
 
   return (
     <>
@@ -131,21 +218,19 @@ export default function DropArea() {
         <DropConditional name="E" />
         <DropConditional name="OU" />
       </div>
-      <div>
-        {regrasMemo}
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Button size="small" onClick={handleAddRegra}>
-            Adicionar novo grupo de condições
-          </Button>
-          {regras.length >= 3 && (
-            <Button
-              size="small"
-              type="danger"
-              icon="delete"
-              onClick={handleRemoveRegra}
-            />
-          )}
-        </div>
+      <div>{regrasMemo}</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Button size="small" onClick={handleAddRegra} disabled={!podeAddRegra}>
+          Adicionar novo grupo de condições
+        </Button>
+        {regrasLength >= 3 && (
+          <Button
+            size="small"
+            type="danger"
+            icon="delete"
+            onClick={handleRemoveRegra}
+          />
+        )}
       </div>
     </>
   );

@@ -13,10 +13,10 @@ const StyledDropAreaTag = styled(Tag).attrs(
   font-weight: 500;
   margin-right: 0;
   margin-bottom: 10px;
-  padding: 17px 16px;
+  padding: 8px;
   border: 1px dashed #0062ff;
   border-radius: 10px;
-  background-color: rgba(0, 98, 255, 0.01);
+  background-color: rgba(198, 219, 253, 0.5);
 
   &.tag-half {
     width: 50%;
@@ -25,6 +25,7 @@ const StyledDropAreaTag = styled(Tag).attrs(
   .placeholder {
     display: inline-block;
     width: 100%;
+    padding: 10px;
     color: #696974;
     font-weight: normal;
     text-align: center;

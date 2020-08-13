@@ -1,4 +1,5 @@
 export const ItemTypes = {
   ITEM: 'item',
-  CONDITIONAL: 'conditional'
+  CONDITIONAL: 'conditional',
+  GROUP: 'group'
 }
