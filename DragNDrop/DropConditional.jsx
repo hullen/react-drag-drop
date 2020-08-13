@@ -15,8 +15,8 @@ export const DropConditional = ({ name, showCopyIcon = true }) => {
     }),
   });
   return (
-    <div ref={drag} style={{ cursor: 'move', marginRight: 10, opacity }}>
-      <FatTag style={{ marginRight: 0 }}>{name}</FatTag>
+    <div ref={drag} style={{ marginRight: 10, opacity }}>
+      <FatTag style={{ cursor: 'move', marginRight: 0 }}>{name}</FatTag>
     </div>
   );
 };

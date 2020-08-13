@@ -15,9 +15,9 @@ function selectBackgroundColor(isActive, canDrop) {
 }
 
 export const DropBox = ({
-  onRemove,
-  onDrop,
-  accept,
+  onRemove = () => {},
+  onDrop = () => {},
+  accept = [],
   type,
   cond,
   itens = [],
@@ -79,8 +79,11 @@ export const DropBox = ({
   }, [isActive, type]);
 
   return (
-    <div ref={drop} style={{ display: 'flex', justifyContent: 'center'  }}>
-      <DropAreaTag size={type === ItemTypes.CONDITIONAL && 'half'} placeholder={labelPlaceholder} style={{ backgroundColor }}>
+    <div ref={drop} style={{ display: 'flex', justifyContent: 'center' }}>
+      <DropAreaTag
+        size={(type === ItemTypes.CONDITIONAL && 'half') || 'default'}
+        placeholder={labelPlaceholder}
+        style={{ backgroundColor }}>
         {type === ItemTypes.CONDITIONAL ? droppedCond : droppedItens}
       </DropAreaTag>
     </div>
