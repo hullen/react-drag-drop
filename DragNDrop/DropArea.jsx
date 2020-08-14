@@ -58,7 +58,6 @@ const subRegrasMock = {
 };
 
 const regrasMock = [
-  subRegrasMock,
   {
     type: ItemTypes.ITEM,
     accepts: [ItemTypes.ITEM, ItemTypes.CONDITIONAL],
@@ -177,13 +176,26 @@ export default function DropArea() {
     );
   }, []);
 
+  const handleRemoveRegraGroup = useCallback(
+    index => {
+      const regraGrupoItems = regras[index].items;
+      const newRegras = update(regras, {
+        $splice: [[index, 1], [index, 0, ...regraGrupoItems]],
+      });
+      setRegras(newRegras);
+    },
+    [regras]
+  );
+
   const regrasMemo = useMemo(
     () =>
       regras.map((regra, index) => {
         if (regra.type === ItemTypes.GROUP) {
           return (
             <DropAreaTag key={index} style={{ marginBottom: 10 }}>
-              <ButtonTransparent>Desagrupar regra</ButtonTransparent>
+              <ButtonTransparent onClick={() => handleRemoveRegraGroup(index)}>
+                Desagrupar regra
+              </ButtonTransparent>
               <div style={{ width: '100%' }}>
                 {regra.items.map((subregra, idx) => (
                   <DropBox
@@ -232,7 +244,14 @@ export default function DropArea() {
         }
         return null;
       }),
-    [regras, enableCheck]
+    [
+      regras,
+      enableCheck,
+      handleDrop,
+      handleRemove,
+      handleToggleCheck,
+      handleRemoveRegraGroup,
+    ]
   );
 
   const itemsMemo = useMemo(
@@ -252,15 +271,15 @@ export default function DropArea() {
 
   // Necessario para contar apenas as regras principais do tipo item, excluindo os grupos
   const regrasItemLength = useMemo(
-    () => regras.filter(({ type, items }) => type === ItemTypes.ITEM && items.length > 1).length,
+    () =>
+      regras.filter(
+        ({ type, items }) => type === ItemTypes.ITEM && items.length > 1
+      ).length,
     [regras]
   );
-  const podeCriarGrupo = useMemo(() => {
-    if (regrasItemLength > 1) {
-      return true;
-    }
-    return false;
-  }, [regrasItemLength]);
+  const podeCriarGrupo = useMemo(() => regrasItemLength > 1, [
+    regrasItemLength,
+  ]);
 
   const createGroup = useCallback(() => {
     const checkedItems = regras
@@ -307,7 +326,10 @@ export default function DropArea() {
       </div>
       <div>{regrasMemo}</div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <ButtonTransparent size="small" onClick={handleAddRegra} disabled={!podeAddRegra}>
+        <ButtonTransparent
+          size="small"
+          onClick={handleAddRegra}
+          disabled={!podeAddRegra}>
           Adicionar novo grupo de condições
         </ButtonTransparent>
         {regrasLength >= 3 && (
