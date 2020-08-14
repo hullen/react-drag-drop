@@ -6,6 +6,7 @@ import { DropItem } from './DropItem';
 import { DropConditional } from './DropConditional';
 import { ItemTypes } from './ItemTypes';
 import { DropAreaTag } from '../components/Tag';
+import { ButtonTransparent } from '../components/Button';
 import { range } from '../utils';
 
 const subRegrasMock = {
@@ -57,6 +58,7 @@ const subRegrasMock = {
 };
 
 const regrasMock = [
+  subRegrasMock,
   {
     type: ItemTypes.ITEM,
     accepts: [ItemTypes.ITEM, ItemTypes.CONDITIONAL],
@@ -181,6 +183,7 @@ export default function DropArea() {
         if (regra.type === ItemTypes.GROUP) {
           return (
             <DropAreaTag key={index} style={{ marginBottom: 10 }}>
+              <ButtonTransparent>Desagrupar regra</ButtonTransparent>
               <div style={{ width: '100%' }}>
                 {regra.items.map((subregra, idx) => (
                   <DropBox
@@ -237,15 +240,8 @@ export default function DropArea() {
     [tags]
   );
 
-  // Necessario para contar apenas as regras principais do tipo item, excluindo os grupos
-  const regrasItemLength = useMemo(
-    () => regras.filter(({ type, items }) => type === ItemTypes.ITEM && items.length > 1).length,
-    [regras]
-  );
-
   // Necessario para validar se pode adicionar uma nova secao de regras
   const regrasLength = regras.length;
-
   const podeAddRegra = useMemo(() => {
     const ultimaRegra = regras[regrasLength - 1];
     if (ultimaRegra && ultimaRegra.cond && ultimaRegra.items.length > 1) {
@@ -254,6 +250,11 @@ export default function DropArea() {
     return false;
   }, [regras, regrasLength]);
 
+  // Necessario para contar apenas as regras principais do tipo item, excluindo os grupos
+  const regrasItemLength = useMemo(
+    () => regras.filter(({ type, items }) => type === ItemTypes.ITEM && items.length > 1).length,
+    [regras]
+  );
   const podeCriarGrupo = useMemo(() => {
     if (regrasItemLength > 1) {
       return true;
@@ -297,18 +298,18 @@ export default function DropArea() {
         <DropConditional name="OU" />
       </div>
       <div style={{ marginBottom: 10 }}>
-        <Button
+        <ButtonTransparent
           size="small"
           onClick={handleToggleGroup}
           disabled={!podeCriarGrupo}>
           {enableCheck ? 'Concluir condicionais' : 'Agrupar condicionais'}
-        </Button>
+        </ButtonTransparent>
       </div>
       <div>{regrasMemo}</div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Button size="small" onClick={handleAddRegra} disabled={!podeAddRegra}>
+        <ButtonTransparent size="small" onClick={handleAddRegra} disabled={!podeAddRegra}>
           Adicionar novo grupo de condições
-        </Button>
+        </ButtonTransparent>
         {regrasLength >= 3 && (
           <Button
             size="small"
