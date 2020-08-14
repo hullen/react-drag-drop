@@ -254,7 +254,7 @@ export default function DropArea() {
       </div>
       <div style={{ marginBottom: 10 }}>
         <Button size="small" onClick={handleToggleGroup}>
-          Agrupar condicionais
+          {enableCheck ? "Concluir condicionais" : "Agrupar condicionais"}
         </Button>
       </div>
       <div>{regrasMemo}</div>
