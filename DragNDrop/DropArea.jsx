@@ -237,48 +237,55 @@ export default function DropArea() {
     [tags]
   );
 
+  // Necessario para contar apenas as regras principais do tipo item, excluindo os grupos
+  const regrasItemLength = useMemo(
+    () => regras.filter(({ type, items }) => type === ItemTypes.ITEM && items.length > 1).length,
+    [regras]
+  );
+
+  // Necessario para validar se pode adicionar uma nova secao de regras
   const regrasLength = regras.length;
+
   const podeAddRegra = useMemo(() => {
-    if (
-      regras[regrasLength - 1] &&
-      regras[regrasLength - 1].cond &&
-      regras[regrasLength - 1].items.length > 1
-    ) {
+    const ultimaRegra = regras[regrasLength - 1];
+    if (ultimaRegra && ultimaRegra.cond && ultimaRegra.items.length > 1) {
       return true;
     }
     return false;
+  }, [regras, regrasLength]);
+
+  const podeCriarGrupo = useMemo(() => {
+    if (regrasItemLength > 1) {
+      return true;
+    }
+    return false;
+  }, [regrasItemLength]);
+
+  const createGroup = useCallback(() => {
+    const checkedItems = regras
+      .map((r, idx) => (r.checked ? idx : undefined))
+      .filter(f => f >= 0);
+    const checkLength = checkedItems.length;
+    if (checkLength > 1) {
+      const min = checkedItems[0] || 0;
+      const max = checkLength > 0 ? checkedItems[checkLength - 1] : 0;
+      const indexes = range(min, max);
+      const indexesLength = indexes.length;
+      const regrasParaMover = regras.filter((_, idx) => indexes.includes(idx));
+      const newGroup = { ...regrasGroupMock, items: regrasParaMover };
+      const newRegras = update(regras, {
+        $splice: [[min, indexesLength], [min, 0, newGroup]],
+      });
+      setRegras(newRegras);
+    }
   }, [regras]);
 
   const handleToggleGroup = useCallback(() => {
     if (enableCheck) {
-      const checkedItems = regras
-        .map((r, idx) => (r.checked ? idx : undefined))
-        .filter(f => f >= 0);
-      const checkLength = checkedItems.length;
-      if (checkLength > 1) {
-        const min = checkedItems[0] || 0;
-        console.log('min', min);
-        const max = checkLength > 0 ? checkedItems[checkLength - 1] : 0;
-        console.log('max', max);
-        const indexes = range(min, max);
-        const indexesLength = indexes.length;
-        const regrasParaMover = regras.filter((_, idx) =>
-          indexes.includes(idx)
-        );
-        console.log('regrasParaMover', regrasParaMover);
-        const newGroup = { ...regrasGroupMock, items: regrasParaMover };
-        console.log('range', indexes);
-
-        const newRegras = update(regras, {
-          $splice: [[min, indexesLength], [min, 0, newGroup]],
-        });
-
-        console.log('newRegras', newRegras);
-        setRegras(newRegras);
-      }
+      createGroup();
     }
     setEnableCheck(prev => !prev);
-  }, [enableCheck, regras]);
+  }, [enableCheck, createGroup]);
 
   return (
     <>
@@ -290,7 +297,10 @@ export default function DropArea() {
         <DropConditional name="OU" />
       </div>
       <div style={{ marginBottom: 10 }}>
-        <Button size="small" onClick={handleToggleGroup}>
+        <Button
+          size="small"
+          onClick={handleToggleGroup}
+          disabled={!podeCriarGrupo}>
           {enableCheck ? 'Concluir condicionais' : 'Agrupar condicionais'}
         </Button>
       </div>
