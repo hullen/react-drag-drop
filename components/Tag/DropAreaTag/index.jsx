@@ -12,7 +12,7 @@ const StyledDropAreaTag = styled(Tag).attrs(
   font-size: 14px;
   font-weight: 500;
   margin-right: 0;
-  margin-bottom: 10px;
+  margin-bottom: 0;
   padding: 8px;
   border: 1px dashed #0062ff;
   border-radius: 10px;

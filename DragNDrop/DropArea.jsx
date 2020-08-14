@@ -61,6 +61,7 @@ const regrasMock = [
     accepts: [ItemTypes.ITEM, ItemTypes.CONDITIONAL],
     items: [],
     cond: null,
+    checked: false,
   },
 ];
 
@@ -76,6 +77,7 @@ const regrasCondMock = [
     accepts: [ItemTypes.ITEM, ItemTypes.CONDITIONAL],
     items: [],
     cond: null,
+    checked: false,
   },
 ];
 
@@ -88,6 +90,7 @@ const itemsMock = Array.from(Array(10).keys(), k => ({
 export default function DropArea() {
   const [regras, setRegras] = useState(regrasMock);
   const [tags] = useState(itemsMock);
+  const [enableCheck, setEnableCheck] = useState(false);
 
   const handleDrop = useCallback(
     (index, item) => {
@@ -153,6 +156,18 @@ export default function DropArea() {
     setRegras(prev => update(prev, { $splice: [[-2, 2]] }));
   }, []);
 
+  const handleToggleCheck = useCallback(index => {
+    setRegras(prev =>
+        update(prev, {
+          [index]: {
+            checked: {
+              $set: !prev[index].checked,
+            },
+          },
+        })
+      );
+  }, []);
+
   const regrasMemo = useMemo(
     () =>
       regras.map((regra, index) => {
@@ -176,20 +191,35 @@ export default function DropArea() {
           );
         } else {
           return (
-            <DropBox
-              key={index}
-              onDrop={item => handleDrop(index, item)}
-              onRemove={itemIndex => handleRemove(index, itemIndex)}
-              accept={regra.accepts}
-              type={regra.type}
-              cond={regra.cond}
-              itens={regra.items}
-            />
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                marginBottom: 10,
+              }}>
+              {enableCheck && <Button
+                size="small"
+                icon="check"
+                shape="circle"
+                type={regra.checked ? "primary" : "default"}
+                onClick={() => handleToggleCheck(index)}
+                style={{ marginRight: 10 }}
+              />}
+              <DropBox
+                key={index}
+                onDrop={item => handleDrop(index, item)}
+                onRemove={itemIndex => handleRemove(index, itemIndex)}
+                accept={regra.accepts}
+                type={regra.type}
+                cond={regra.cond}
+                itens={regra.items}
+              />
+            </div>
           );
         }
         return null;
       }),
-    [regras]
+    [regras, enableCheck]
   );
 
   const itemsMemo = useMemo(
@@ -209,6 +239,10 @@ export default function DropArea() {
     return false;
   }, [regras]);
 
+  const handleToggleGroup = useCallback(() => {
+    setEnableCheck(prev => !prev);
+  }, []);
+
   return (
     <>
       <div style={{ display: 'flex', flexWrap: 'wrap', marginBottom: 10 }}>
@@ -217,6 +251,11 @@ export default function DropArea() {
       <div style={{ display: 'flex', flexWrap: 'wrap', marginBottom: 10 }}>
         <DropConditional name="E" />
         <DropConditional name="OU" />
+      </div>
+      <div style={{ marginBottom: 10 }}>
+        <Button size="small" onClick={handleToggleGroup}>
+          Agrupar condicionais
+        </Button>
       </div>
       <div>{regrasMemo}</div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
