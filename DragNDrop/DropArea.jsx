@@ -57,6 +57,7 @@ const subRegrasMock = {
 };
 
 const regrasMock = [
+  subRegrasMock,
   {
     type: ItemTypes.ITEM,
     accepts: [ItemTypes.ITEM, ItemTypes.CONDITIONAL],
@@ -65,6 +66,14 @@ const regrasMock = [
     checked: false,
   },
 ];
+
+const regrasGroupMock = {
+  type: ItemTypes.GROUP,
+  accepts: [],
+  items: [],
+  cond: null,
+  checked: false,
+};
 
 const regrasCondMock = [
   {
@@ -161,9 +170,7 @@ export default function DropArea() {
     setRegras(prev =>
       update(prev, {
         [index]: {
-          checked: {
-            $set: !prev[index].checked,
-          },
+          $toggle: ['checked'],
         },
       })
     );
@@ -174,17 +181,15 @@ export default function DropArea() {
       regras.map((regra, index) => {
         if (regra.type === ItemTypes.GROUP) {
           return (
-            <DropAreaTag>
+            <DropAreaTag key={index} style={{ marginBottom: 10 }}>
               <div style={{ width: '100%' }}>
-                {regra.items.map((subregra, index) => (
+                {regra.items.map((subregra, idx) => (
                   <DropBox
-                    key={index}
-                    onDrop={item => handleDrop(index, item)}
-                    onRemove={itemIndex => handleRemove(index, itemIndex)}
-                    accept={subregra.accepts}
+                    accept={[]}
                     type={subregra.type}
                     cond={subregra.cond}
                     itens={subregra.items}
+                    group
                   />
                 ))}
               </div>
@@ -193,24 +198,26 @@ export default function DropArea() {
         } else {
           return (
             <div
+              key={index}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: 10,
               }}>
-              {enableCheck && (
-                <Button
-                  size="small"
-                  icon="check"
-                  shape="circle"
-                  type={regra.checked ? 'primary' : 'default'}
-                  onClick={() => handleToggleCheck(index)}
-                  style={{ marginRight: 10 }}
-                />
-              )}
+              {enableCheck &&
+                regra.type === ItemTypes.ITEM &&
+                regra.items.length > 0 && (
+                  <Button
+                    size="small"
+                    icon="check"
+                    shape="circle"
+                    type={regra.checked ? 'primary' : 'default'}
+                    onClick={() => handleToggleCheck(index)}
+                    style={{ marginRight: 10 }}
+                  />
+                )}
               <DropBox
-                key={index}
                 onDrop={item => handleDrop(index, item)}
                 onRemove={itemIndex => handleRemove(index, itemIndex)}
                 accept={regra.accepts}
@@ -227,7 +234,7 @@ export default function DropArea() {
   );
 
   const itemsMemo = useMemo(
-    () => tags.map(({ name, id }) => <DropItem id={id} name={name} key={id} />),
+    () => tags.map(({ name, id }) => <DropItem key={id} id={id} name={name} />),
     [tags]
   );
 
@@ -249,11 +256,27 @@ export default function DropArea() {
         .map((r, idx) => (r.checked ? idx : undefined))
         .filter(f => f >= 0);
       const checkLength = checkedItems.length;
-      const min = checkedItems[0] || 0;
-      const max = checkLength > 0 ? checkedItems[checkLength - 1] : 0;
-      console.log('min', min);
-      console.log('max', max);
-      console.log('range', range(min, max));
+      if (checkLength > 1) {
+        const min = checkedItems[0] || 0;
+        console.log('min', min);
+        const max = checkLength > 0 ? checkedItems[checkLength - 1] : 0;
+        console.log('max', max);
+        const indexes = range(min, max);
+        const indexesLength = indexes.length;
+        const regrasParaMover = regras.filter((_, idx) =>
+          indexes.includes(idx)
+        );
+        console.log('regrasParaMover', regrasParaMover);
+        const newGroup = { ...regrasGroupMock, items: regrasParaMover };
+        console.log('range', indexes);
+
+        const newRegras = update(regras, {
+          $splice: [[min, indexesLength], [min, 0, newGroup]],
+        });
+
+        console.log('newRegras', newRegras);
+        setRegras(newRegras);
+      }
     }
     setEnableCheck(prev => !prev);
   }, [enableCheck, regras]);

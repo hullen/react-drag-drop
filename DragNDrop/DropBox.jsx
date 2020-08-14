@@ -21,6 +21,7 @@ export const DropBox = ({
   type,
   cond,
   itens = [],
+  group = false,
 }) => {
   const [{ canDrop, isOver }, drop] = useDrop({
     accept,
@@ -38,11 +39,13 @@ export const DropBox = ({
     return (
       <FatTag style={{ marginRight: 5 }}>
         {cond}{' '}
-        <Icon
-          type="close"
-          onClick={() => onRemove(-1)}
-          style={{ color: '#FFF', fontSize: 18 }}
-        />
+        {!group && (
+          <Icon
+            type="close"
+            onClick={() => onRemove(-1)}
+            style={{ color: '#FFF', fontSize: 18 }}
+          />
+        )}
       </FatTag>
     );
   }, [cond, onRemove]);
@@ -53,11 +56,11 @@ export const DropBox = ({
         <span key={index} style={{ marginTop: 5, marginBottom: 5 }}>
           <BigTag style={{ marginRight: 5 }}>
             {it.name}{' '}
-            <Icon
+            {!group && <Icon
               type="close"
               onClick={() => onRemove(index)}
               style={{ color: '#FC5A5A', fontSize: 18 }}
-            />
+            />}
           </BigTag>
           {droppedCond}
         </span>
@@ -79,7 +82,14 @@ export const DropBox = ({
   }, [isActive, type]);
 
   return (
-    <div ref={drop} style={{ display: 'flex', justifyContent: 'center', flex: 1 }}>
+    <div
+      ref={drop}
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        flex: 1,
+        marginBottom: group ? 10 : undefined,
+      }}>
       <DropAreaTag
         size={(type === ItemTypes.CONDITIONAL && 'half') || undefined}
         justify={(type === ItemTypes.CONDITIONAL && 'center') || undefined}
