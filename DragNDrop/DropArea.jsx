@@ -57,7 +57,6 @@ const subRegrasMock = {
 };
 
 const regrasMock = [
-  subRegrasMock,
   {
     type: ItemTypes.ITEM,
     accepts: [ItemTypes.ITEM, ItemTypes.CONDITIONAL],
