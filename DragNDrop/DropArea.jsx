@@ -6,6 +6,7 @@ import { DropItem } from './DropItem';
 import { DropConditional } from './DropConditional';
 import { ItemTypes } from './ItemTypes';
 import { DropAreaTag } from '../components/Tag';
+import { range } from '../utils';
 
 const subRegrasMock = {
   type: ItemTypes.GROUP,
@@ -158,14 +159,14 @@ export default function DropArea() {
 
   const handleToggleCheck = useCallback(index => {
     setRegras(prev =>
-        update(prev, {
-          [index]: {
-            checked: {
-              $set: !prev[index].checked,
-            },
+      update(prev, {
+        [index]: {
+          checked: {
+            $set: !prev[index].checked,
           },
-        })
-      );
+        },
+      })
+    );
   }, []);
 
   const regrasMemo = useMemo(
@@ -195,16 +196,19 @@ export default function DropArea() {
               style={{
                 display: 'flex',
                 alignItems: 'center',
+                justifyContent: 'center',
                 marginBottom: 10,
               }}>
-              {enableCheck && <Button
-                size="small"
-                icon="check"
-                shape="circle"
-                type={regra.checked ? "primary" : "default"}
-                onClick={() => handleToggleCheck(index)}
-                style={{ marginRight: 10 }}
-              />}
+              {enableCheck && (
+                <Button
+                  size="small"
+                  icon="check"
+                  shape="circle"
+                  type={regra.checked ? 'primary' : 'default'}
+                  onClick={() => handleToggleCheck(index)}
+                  style={{ marginRight: 10 }}
+                />
+              )}
               <DropBox
                 key={index}
                 onDrop={item => handleDrop(index, item)}
@@ -240,8 +244,19 @@ export default function DropArea() {
   }, [regras]);
 
   const handleToggleGroup = useCallback(() => {
+    if (enableCheck) {
+      const checkedItems = regras
+        .map((r, idx) => (r.checked ? idx : undefined))
+        .filter(f => f >= 0);
+      const checkLength = checkedItems.length;
+      const min = checkedItems[0] || 0;
+      const max = checkLength > 0 ? checkedItems[checkLength - 1] : 0;
+      console.log('min', min);
+      console.log('max', max);
+      console.log('range', range(min, max));
+    }
     setEnableCheck(prev => !prev);
-  }, []);
+  }, [enableCheck, regras]);
 
   return (
     <>
@@ -254,7 +269,7 @@ export default function DropArea() {
       </div>
       <div style={{ marginBottom: 10 }}>
         <Button size="small" onClick={handleToggleGroup}>
-          {enableCheck ? "Concluir condicionais" : "Agrupar condicionais"}
+          {enableCheck ? 'Concluir condicionais' : 'Agrupar condicionais'}
         </Button>
       </div>
       <div>{regrasMemo}</div>

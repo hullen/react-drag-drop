@@ -79,9 +79,10 @@ export const DropBox = ({
   }, [isActive, type]);
 
   return (
-    <div ref={drop} style={{ display: 'flex', justifyContent: 'center' }}>
+    <div ref={drop} style={{ display: 'flex', justifyContent: 'center', flex: 1 }}>
       <DropAreaTag
-        size={(type === ItemTypes.CONDITIONAL && 'half') || 'default'}
+        size={(type === ItemTypes.CONDITIONAL && 'half') || undefined}
+        justify={(type === ItemTypes.CONDITIONAL && 'center') || undefined}
         placeholder={labelPlaceholder}
         style={{ backgroundColor }}>
         {type === ItemTypes.CONDITIONAL ? droppedCond : droppedItens}

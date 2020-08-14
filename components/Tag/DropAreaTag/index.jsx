@@ -7,6 +7,7 @@ const StyledDropAreaTag = styled(Tag).attrs(
 )`
   display: flex;
   flex-wrap: wrap;
+  justify-content: ${({justify}) => justify};
   width: 100%;
   color: #171725;
   font-size: 14px;
