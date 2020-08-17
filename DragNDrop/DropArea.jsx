@@ -152,7 +152,7 @@ export default function DropArea() {
         const condPrev = regras[index - 2] || {};
         const condNext = regras[index + 2] || {};
 
-        if (condPrev.cond && condPrev.cond !== condDropped) {
+        if (regraType === ItemTypes.CONDITIONAL && condPrev.cond && condPrev.cond !== condDropped) {
           console.log('regra anterior diferente');
           notification.error({
             message: 'Não é possível adicionar operador',
@@ -160,7 +160,7 @@ export default function DropArea() {
               condPrev.cond
             }).`,
           });
-        } else if (condNext.cond && condNext.cond !== condDropped) {
+        } else if (regraType === ItemTypes.CONDITIONAL &&condNext.cond && condNext.cond !== condDropped) {
           console.log('regra proxima diferente');
           notification.error({
             message: 'Não é possível adicionar operador',
