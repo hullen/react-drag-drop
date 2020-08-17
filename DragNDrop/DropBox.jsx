@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { Icon } from 'antd';
 import { useDrop } from 'react-dnd';
-import { ItemTypes } from './ItemTypes';
 import { FatTag, BigTag, DropAreaTag } from '../components/Tag';
+import { ItemTypes } from './ItemTypes';
 
 function selectBackgroundColor(isActive, canDrop, selected) {
   if (isActive) {
@@ -51,7 +51,7 @@ export const DropBox = ({
         )}
       </FatTag>
     );
-  }, [cond, onRemove]);
+  }, [cond, group, onRemove]);
 
   const droppedItens = useMemo(() => {
     const itensLenght = Array.isArray(itens) ? itens.length : 0;
@@ -71,7 +71,7 @@ export const DropBox = ({
       ));
     }
     return null;
-  }, [itens, droppedCond, onRemove]);
+  }, [itens, group, droppedCond, onRemove]);
 
   const labelPlaceholder = useMemo(() => {
     let label = isActive
