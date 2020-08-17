@@ -91,6 +91,34 @@ const regrasCondMock = [
   },
 ];
 
+const regrasComGrupoMock = [
+  subRegrasMock,
+  {
+      type: ItemTypes.CONDITIONAL,
+      accepts: [ItemTypes.CONDITIONAL],
+      items: [],
+      cond: 'OU',
+    },
+    {
+      type: ItemTypes.ITEM,
+      accepts: [ItemTypes.ITEM, ItemTypes.CONDITIONAL],
+      items: [
+        {
+          id: 3,
+          name: `Item 3`,
+          type: ItemTypes.ITEM,
+        },
+        {
+          id: 4,
+          name: `Item 4`,
+          type: ItemTypes.ITEM,
+        },
+      ],
+      cond: 'E',
+    },
+  ...regrasCondMock,
+];
+
 const itemsMock = Array.from(Array(10).keys(), k => ({
   id: k,
   name: `Item ${k}`,
@@ -98,7 +126,7 @@ const itemsMock = Array.from(Array(10).keys(), k => ({
 }));
 
 export default function DropArea() {
-  const [regras, setRegras] = useState(regrasMock);
+  const [regras, setRegras] = useState(regrasComGrupoMock);
   const [tags] = useState(itemsMock);
   const [enableCheck, setEnableCheck] = useState(false);
   console.log('regras',regras);
@@ -181,10 +209,20 @@ export default function DropArea() {
   const handleRemoveRegraGroup = useCallback(
     index => {
       const regraGrupoItems = regras[index].items;
+      const regraGrupoCond = regraGrupoItems[1];
+      const condPrev = regras[index-1] || {};
+      const condNext = regras[index+1] || {};
+
+      if (condPrev.cond && condPrev.cond !== regraGrupoCond.cond) {
+        notification.error({ message: 'Não é possível desagrupar', description: `O operador do grupo (${regraGrupoCond.cond}) é diferente do operador da regra anterior (${condPrev.cond})` });
+      } else if (condNext.cond && condNext.cond !== regraGrupoCond.cond) {
+        notification.error({ message: 'Não é possível desagrupar', description: `O operador do grupo (${regraGrupoCond.cond}) é diferente do operador da próxima regra (${condNext.cond})` });
+      } else {
       const newRegras = update(regras, {
         $splice: [[index, 1], [index, 0, ...regraGrupoItems]],
       });
-      setRegras(newRegras);
+      // setRegras(newRegras);
+      }
     },
     [regras]
   );
