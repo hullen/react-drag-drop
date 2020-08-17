@@ -260,16 +260,6 @@ export default function DropArea() {
     [tags]
   );
 
-  // Necessario para validar se pode adicionar uma nova secao de regras
-  const regrasLength = regras.length;
-  const podeAddRegra = useMemo(() => {
-    const ultimaRegra = regras[regrasLength - 1];
-    if (ultimaRegra && ultimaRegra.cond && ultimaRegra.items.length > 1) {
-      return true;
-    }
-    return false;
-  }, [regras, regrasLength]);
-
   // Necessario para contar apenas as regras principais do tipo item, excluindo os grupos
   const regrasItemLength = useMemo(
     () =>
@@ -281,6 +271,16 @@ export default function DropArea() {
   const podeCriarGrupo = useMemo(() => regrasItemLength > 1, [
     regrasItemLength,
   ]);
+
+  // Necessario para validar se pode adicionar uma nova secao de regras
+  const regrasLength = regras.length;
+  const podeAddRegra = useMemo(() => {
+    const ultimaRegra = regras[regrasLength - 1];
+    if ((ultimaRegra && ultimaRegra.cond && ultimaRegra.items.length > 1) || regrasItemLength === 0) {
+      return true;
+    }
+    return false;
+  }, [regras, regrasLength, regrasItemLength]);
 
   const createGroup = useCallback(() => {
     const checkedItems = regras
