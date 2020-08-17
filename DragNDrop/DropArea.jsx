@@ -6,7 +6,7 @@ import { DropItem } from './DropItem';
 import { DropConditional } from './DropConditional';
 import { ItemTypes } from './ItemTypes';
 import { DropAreaTag } from '../components/Tag';
-import { ButtonTransparent, ButtonTransparent2 } from '../components/Button';
+import { ButtonTransparent } from '../components/Button';
 import { range } from '../utils';
 
 const subRegrasMock = {
@@ -412,14 +412,14 @@ export default function DropArea() {
       </div>
       <div>{regrasMemo}</div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <ButtonTransparent2
+        <ButtonTransparent
           size="small"
           onClick={handleAddRegra}
           disabled={!podeAddRegra}>
           Adicionar novo grupo de condições
-        </ButtonTransparent2>
+        </ButtonTransparent>
         {regrasLength >= 3 && (
-          <ButtonTransparent2
+          <ButtonTransparent
             size="small"
             type="danger"
             icon="delete"
