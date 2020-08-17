@@ -7,7 +7,7 @@ export function ButtonTransparent({ children, ...props }) {
       type="primary"
       size="small"
       ghost
-      style={{ border: 'none' }}
+      style={{ border: 'none', boxShadow: 'none' }}
       {...props}>
       {children}
     </AButton>
