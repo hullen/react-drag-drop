@@ -41,7 +41,7 @@ export const DropBox = ({
     if (!cond) return null;
     return (
       <FatTag style={{ marginRight: 5 }}>
-        {cond}{' '}
+        {cond}
         {!group && (
           <Icon
             type="close"
@@ -57,9 +57,9 @@ export const DropBox = ({
     const itensLenght = Array.isArray(itens) ? itens.length : 0;
     if (itensLenght > 0) {
       return itens.map((it, index) => (
-        <span key={index} style={{ marginTop: 5, marginBottom: 5 }}>
+        <span key={it.id} style={{ marginTop: 5, marginBottom: 5 }}>
           <BigTag style={{ marginRight: 5 }}>
-            {it.name}{' '}
+            {it.name}
             {!group && <Icon
               type="close"
               onClick={() => onRemove(index)}
