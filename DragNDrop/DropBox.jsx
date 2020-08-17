@@ -51,7 +51,8 @@ export const DropBox = ({
   }, [cond, onRemove]);
 
   const droppedItens = useMemo(() => {
-    if (Array.isArray(itens) && itens.length > 0) {
+    const itensLenght = Array.isArray(itens) ? itens.length : 0;
+    if (itensLenght > 0) {
       return itens.map((it, index) => (
         <span key={index} style={{ marginTop: 5, marginBottom: 5 }}>
           <BigTag style={{ marginRight: 5 }}>
@@ -62,7 +63,7 @@ export const DropBox = ({
               style={{ color: '#FC5A5A', fontSize: 18 }}
             />}
           </BigTag>
-          {droppedCond}
+           {(index+1 < itensLenght || itensLenght === 1) && droppedCond}
         </span>
       ));
     }
