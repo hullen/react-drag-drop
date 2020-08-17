@@ -101,7 +101,7 @@ export default function DropArea() {
   const [regras, setRegras] = useState(regrasMock);
   const [tags] = useState(itemsMock);
   const [enableCheck, setEnableCheck] = useState(false);
-
+  console.log('regras',regras);
   const handleDrop = useCallback(
     (index, item) => {
       if (item.type === ItemTypes.ITEM) {
@@ -135,6 +135,7 @@ export default function DropArea() {
   );
 
   const handleRemove = useCallback((index, itemIndex) => {
+    // if is a item type
     if (itemIndex >= 0) {
       setRegras(prev =>
         update(prev, {
@@ -146,6 +147,7 @@ export default function DropArea() {
         })
       );
     } else {
+    // if is a conditional type
       setRegras(prev =>
         update(prev, {
           [index]: {
@@ -292,7 +294,7 @@ export default function DropArea() {
       const max = checkLength > 0 ? checkedItems[checkLength - 1] : 0;
       const indexes = range(min, max);
       const indexesLength = indexes.length;
-      const regrasParaMover = regras.filter((_, idx) => indexes.includes(idx));
+      const regrasParaMover = regras.filter((_, idx) => indexes.includes(idx)).map(r => ({ ...r, checked: false}));
       const newGroup = { ...regrasGroupMock, items: regrasParaMover };
       const newRegras = update(regras, {
         $splice: [[min, indexesLength], [min, 0, newGroup]],
