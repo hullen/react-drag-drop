@@ -131,7 +131,7 @@ export default function DropArea() {
   const [enableCheck, setEnableCheck] = useState(false);
   console.log('regras', regras);
   const handleDrop = useCallback(
-    (index, item) => {
+    (index, item, regraType) => {
       if (item.type === ItemTypes.ITEM) {
         const itemExists = regras[index].items.find(it => it.id === item.id);
         if (!itemExists) {
@@ -148,15 +148,37 @@ export default function DropArea() {
           notification.error({ message: `O ${item.name} já existe!` });
         }
       } else if (item.type === ItemTypes.CONDITIONAL) {
-        setRegras(prev =>
-          update(prev, {
-            [index]: {
-              cond: {
-                $set: item.name,
+        const condDropped = item.name;
+        const condPrev = regras[index - 2] || {};
+        const condNext = regras[index + 2] || {};
+
+        if (condPrev.cond && condPrev.cond !== condDropped) {
+          console.log('regra anterior diferente');
+          notification.error({
+            message: 'Não é possível adicionar operador',
+            description: `O operador (${condDropped}) é diferente do operador da regra anterior (${
+              condPrev.cond
+            }).`,
+          });
+        } else if (condNext.cond && condNext.cond !== condDropped) {
+          console.log('regra proxima diferente');
+          notification.error({
+            message: 'Não é possível adicionar operador',
+            description: `O operador (${condDropped}) é diferente do operador da próxima regra (${
+              condNext.cond
+            }).`,
+          });
+        } else {
+          setRegras(prev =>
+            update(prev, {
+              [index]: {
+                cond: {
+                  $set: condDropped,
+                },
               },
-            },
-          })
-        );
+            })
+          );
+        }
       }
     },
     [regras]
@@ -282,7 +304,7 @@ export default function DropArea() {
                   />
                 )}
               <DropBox
-                onDrop={item => handleDrop(index, item)}
+                onDrop={item => handleDrop(index, item, regra.type)}
                 onRemove={itemIndex => handleRemove(index, itemIndex)}
                 accept={regra.accepts}
                 selected={regra.checked && enableCheck ? 'true' : undefined}
