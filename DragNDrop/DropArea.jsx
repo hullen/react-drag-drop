@@ -94,28 +94,28 @@ const regrasCondMock = [
 const regrasComGrupoMock = [
   subRegrasMock,
   {
-      type: ItemTypes.CONDITIONAL,
-      accepts: [ItemTypes.CONDITIONAL],
-      items: [],
-      cond: 'OU',
-    },
-    {
-      type: ItemTypes.ITEM,
-      accepts: [ItemTypes.ITEM, ItemTypes.CONDITIONAL],
-      items: [
-        {
-          id: 3,
-          name: `Item 3`,
-          type: ItemTypes.ITEM,
-        },
-        {
-          id: 4,
-          name: `Item 4`,
-          type: ItemTypes.ITEM,
-        },
-      ],
-      cond: 'E',
-    },
+    type: ItemTypes.CONDITIONAL,
+    accepts: [ItemTypes.CONDITIONAL],
+    items: [],
+    cond: 'OU',
+  },
+  {
+    type: ItemTypes.ITEM,
+    accepts: [ItemTypes.ITEM, ItemTypes.CONDITIONAL],
+    items: [
+      {
+        id: 3,
+        name: `Item 3`,
+        type: ItemTypes.ITEM,
+      },
+      {
+        id: 4,
+        name: `Item 4`,
+        type: ItemTypes.ITEM,
+      },
+    ],
+    cond: 'E',
+  },
   ...regrasCondMock,
 ];
 
@@ -129,7 +129,7 @@ export default function DropArea() {
   const [regras, setRegras] = useState(regrasComGrupoMock);
   const [tags] = useState(itemsMock);
   const [enableCheck, setEnableCheck] = useState(false);
-  console.log('regras',regras);
+  console.log('regras', regras);
   const handleDrop = useCallback(
     (index, item) => {
       if (item.type === ItemTypes.ITEM) {
@@ -175,7 +175,7 @@ export default function DropArea() {
         })
       );
     } else {
-    // if is a conditional type
+      // if is a conditional type
       setRegras(prev =>
         update(prev, {
           [index]: {
@@ -210,18 +210,28 @@ export default function DropArea() {
     index => {
       const regraGrupoItems = regras[index].items;
       const regraGrupoCond = regraGrupoItems[1];
-      const condPrev = regras[index-1] || {};
-      const condNext = regras[index+1] || {};
+      const condPrev = regras[index - 1] || {};
+      const condNext = regras[index + 1] || {};
 
       if (condPrev.cond && condPrev.cond !== regraGrupoCond.cond) {
-        notification.error({ message: 'Não é possível desagrupar', description: `O operador do grupo (${regraGrupoCond.cond}) é diferente do operador da regra anterior (${condPrev.cond})` });
+        notification.error({
+          message: 'Não é possível desagrupar',
+          description: `O operador do grupo (${
+            regraGrupoCond.cond
+          }) é diferente do operador da regra anterior (${condPrev.cond})`,
+        });
       } else if (condNext.cond && condNext.cond !== regraGrupoCond.cond) {
-        notification.error({ message: 'Não é possível desagrupar', description: `O operador do grupo (${regraGrupoCond.cond}) é diferente do operador da próxima regra (${condNext.cond})` });
+        notification.error({
+          message: 'Não é possível desagrupar',
+          description: `O operador do grupo (${
+            regraGrupoCond.cond
+          }) é diferente do operador da próxima regra (${condNext.cond})`,
+        });
       } else {
-      const newRegras = update(regras, {
-        $splice: [[index, 1], [index, 0, ...regraGrupoItems]],
-      });
-      // setRegras(newRegras);
+        const newRegras = update(regras, {
+          $splice: [[index, 1], [index, 0, ...regraGrupoItems]],
+        });
+        setRegras(newRegras);
       }
     },
     [regras]
@@ -316,7 +326,10 @@ export default function DropArea() {
   const regrasLength = regras.length;
   const podeAddRegra = useMemo(() => {
     const ultimaRegra = regras[regrasLength - 1];
-    if ((ultimaRegra && ultimaRegra.cond && ultimaRegra.items.length > 1) || regrasItemLength === 0) {
+    if (
+      (ultimaRegra && ultimaRegra.cond && ultimaRegra.items.length > 1) ||
+      regrasItemLength === 0
+    ) {
       return true;
     }
     return false;
@@ -332,7 +345,9 @@ export default function DropArea() {
       const max = checkLength > 0 ? checkedItems[checkLength - 1] : 0;
       const indexes = range(min, max);
       const indexesLength = indexes.length;
-      const regrasParaMover = regras.filter((_, idx) => indexes.includes(idx)).map(r => ({ ...r, checked: false}));
+      const regrasParaMover = regras
+        .filter((_, idx) => indexes.includes(idx))
+        .map(r => ({ ...r, checked: false }));
       const newGroup = { ...regrasGroupMock, items: regrasParaMover };
       const newRegras = update(regras, {
         $splice: [[min, indexesLength], [min, 0, newGroup]],
