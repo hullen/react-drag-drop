@@ -4,13 +4,15 @@ import { useDrop } from 'react-dnd';
 import { ItemTypes } from './ItemTypes';
 import { FatTag, BigTag, DropAreaTag } from '../components/Tag';
 
-function selectBackgroundColor(isActive, canDrop) {
+function selectBackgroundColor(isActive, canDrop, selected) {
   if (isActive) {
     return 'lightgreen';
   } else if (canDrop) {
-    return 'lightblue';
+    return 'rgba(198, 219, 253, 0.8)';
+  } else if (selected) {
+    return 'rgba(198, 219, 253, 0.5)';
   } else {
-    return 'rgba(198, 219, 253, 0.6)';
+    return 'rgba(198, 219, 253, 0.2)';
   }
 }
 
@@ -18,6 +20,7 @@ export const DropBox = ({
   onRemove = () => {},
   onDrop = () => {},
   accept = [],
+  selected = false,
   type,
   cond,
   itens = [],
@@ -32,7 +35,7 @@ export const DropBox = ({
     }),
   });
   const isActive = canDrop && isOver;
-  const backgroundColor = selectBackgroundColor(isActive, canDrop);
+  const backgroundColor = selectBackgroundColor(isActive, canDrop, selected);
 
   const droppedCond = useMemo(() => {
     if (!cond) return null;

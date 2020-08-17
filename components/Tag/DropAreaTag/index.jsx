@@ -3,7 +3,10 @@ import styled from 'styled-components';
 import { Tag } from 'antd';
 
 const StyledDropAreaTag = styled(Tag).attrs(
-  props => props.size === 'half' && { className: 'tag-half' }
+  props => {
+    const className = props.size === 'half' && 'tag-half';
+    return { className }
+  }
 )`
   display: flex;
   flex-wrap: wrap;
@@ -17,7 +20,7 @@ const StyledDropAreaTag = styled(Tag).attrs(
   padding: 8px;
   border: 1px dashed #0062ff;
   border-radius: 10px;
-  background-color: rgba(198, 219, 253, 0.5);
+  background-color: rgba(198, 219, 253, 0.2);
 
   &.tag-half {
     width: 50%;

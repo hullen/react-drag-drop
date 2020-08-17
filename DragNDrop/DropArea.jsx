@@ -235,6 +235,7 @@ export default function DropArea() {
                 onDrop={item => handleDrop(index, item)}
                 onRemove={itemIndex => handleRemove(index, itemIndex)}
                 accept={regra.accepts}
+                selected={regra.checked && enableCheck ? 'true' : undefined}
                 type={regra.type}
                 cond={regra.cond}
                 itens={regra.items}
@@ -333,7 +334,7 @@ export default function DropArea() {
           Adicionar novo grupo de condições
         </ButtonTransparent>
         {regrasLength >= 3 && (
-          <Button
+          <ButtonTransparent
             size="small"
             type="danger"
             icon="delete"
