@@ -279,6 +279,7 @@ export default function DropArea() {
               <div style={{ width: '100%' }}>
                 {regra.items.map((subregra, idx) => (
                   <DropBox
+                    key={idx}
                     accept={[]}
                     type={subregra.type}
                     cond={subregra.cond}
