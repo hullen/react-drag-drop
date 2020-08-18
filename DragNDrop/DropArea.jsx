@@ -4,7 +4,7 @@ import { Button, notification } from 'antd';
 import { DropBox } from './DropBox';
 import { DropItem } from './DropItem';
 import { DropConditional } from './DropConditional';
-import { ItemTypes } from './ItemTypes';
+import { ItemTypes } from './enums';
 import { DropAreaTag } from '../components/Tag';
 import { ButtonTransparent } from '../components/Button';
 import { range } from '../utils';

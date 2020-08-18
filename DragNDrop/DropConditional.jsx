@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDrag } from 'react-dnd';
 import { FatTag } from '../components/Tag';
-import { ItemTypes } from './ItemTypes';
+import { ItemTypes } from './enums';
 
 export const DropConditional = ({ name, showCopyIcon = true }) => {
   const item = { name, type: ItemTypes.CONDITIONAL };

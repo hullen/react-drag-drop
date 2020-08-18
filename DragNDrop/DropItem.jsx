@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDrag } from 'react-dnd';
 import { BigTag } from '../components/Tag';
-import { ItemTypes } from './ItemTypes';
+import { ItemTypes } from './enums';
 
 export const DropItem = ({ id, name, showCopyIcon = true }) => {
   const item = { id, name, type: ItemTypes.ITEM };

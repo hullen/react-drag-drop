@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Icon } from 'antd';
 import { useDrop } from 'react-dnd';
 import { FatTag, BigTag, DropAreaTag } from '../components/Tag';
-import { ItemTypes } from './ItemTypes';
+import { ItemTypes } from './enums';
 
 function selectBackgroundColor(isActive, canDrop, selected) {
   if (isActive) {
