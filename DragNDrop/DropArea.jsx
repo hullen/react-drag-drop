@@ -349,9 +349,18 @@ export default function DropArea() {
       ).length,
     [regras]
   );
-  const podeCriarGrupo = useMemo(() => regrasItemLength > 1, [
-    regrasItemLength,
-  ]);
+
+  // Necessário para verificar se não há qualquer condicional principal vazia
+  const hasInvalidCond = useMemo(() => {
+    const findInvalidCond =
+      regras.filter(r => r.type === ItemTypes.CONDITIONAL && !r.cond) || 0;
+    return findInvalidCond.length > 0;
+  }, [regras]);
+
+  const podeCriarGrupo = useMemo(
+    () => regrasItemLength > 1 && !hasInvalidCond,
+    [regrasItemLength, hasInvalidCond]
+  );
 
   // Necessario para validar se pode adicionar uma nova secao de regras
   const regrasLength = regras.length;
